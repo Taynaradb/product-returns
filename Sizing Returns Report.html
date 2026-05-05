@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!-- saved from url=(0045)file:///C:/Users/Tayna/Downloads/index_1.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sizing Returns Report</title>
+<link href="./Sizing Returns Report_files/css2" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #f5f5f5; color: #1a1a1a; font-family: 'Inter', sans-serif; font-size: 14px; min-height: 100vh; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* KPI CARDS */
+  .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+  .kpi { background: #fff; border-radius: 12px; padding: 1.25rem 1.5rem; }
+  .kpi-label { font-size: 13px; color: #666; margin-bottom: 4px; }
+  .kpi-value { font-size: 36px; font-weight: 600; line-height: 1.1; color: #1a1a1a; }
+  .kpi-value.blue { color: #2563eb; }
+  .kpi-value.orange { color: #ea580c; }
+  .kpi-sub { font-size: 12px; color: #999; margin-top: 2px; }
+
+  /* FILTERS */
+  .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .filter-btn { border: 1.5px solid #d0d0d0; background: #fff; color: #444; border-radius: 999px; padding: 7px 16px; font-size: 13px; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .filter-btn:hover { border-color: #888; color: #1a1a1a; }
+  .filter-btn.active { background: #1a1a1a; border-color: #1a1a1a; color: #fff; }
+
+  /* SEARCH */
+  .search-wrap { position: relative; margin-bottom: 1.25rem; }
+  .search-wrap input { width: 100%; background: #fff; border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 10px 14px 10px 38px; font-family: 'Inter', sans-serif; font-size: 14px; color: #1a1a1a; outline: none; transition: border-color 0.2s; }
+  .search-wrap input:focus { border-color: #888; }
+  .search-wrap input::placeholder { color: #bbb; }
+  .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #bbb; font-size: 16px; pointer-events: none; }
+
+  /* LEGEND */
+  .legend { display: flex; gap: 14px; font-size: 12px; color: #666; margin-bottom: 10px; align-items: center; }
+  .leg { display: flex; align-items: center; gap: 5px; }
+  .leg-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* TABLE */
+  .table-wrap { background: #fff; border-radius: 12px; overflow: hidden; overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { font-size: 12px; font-weight: 500; color: #999; text-align: left; padding: 11px 16px; border-bottom: 1px solid #f0f0f0; white-space: nowrap; cursor: pointer; user-select: none; }
+  thead th:hover { color: #444; }
+  thead th.num, tbody td.num { text-align: right; }
+  tbody tr { border-bottom: 1px solid #f5f5f5; transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafafa; }
+  tbody td { padding: 11px 16px; vertical-align: middle; }
+
+  /* BAR */
+  .bar-wrap { display: flex; align-items: center; gap: 8px; min-width: 130px; }
+  .bar-track { flex: 1; height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; display: flex; }
+  .bar-big   { background: #ea580c; height: 100%; }
+  .bar-small { background: #2563eb; height: 100%; }
+  .bar-label { font-size: 11px; color: #aaa; white-space: nowrap; min-width: 36px; }
+
+  /* LEAN BADGE */
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+  .badge-small { background: #eff6ff; color: #2563eb; }
+  .badge-big   { background: #fff7ed; color: #ea580c; }
+  .badge-even  { background: #f5f5f5; color: #888; }
+
+  .count-bar { font-size: 12px; color: #aaa; margin-bottom: 8px; }
+  .empty { text-align: center; padding: 3rem; color: #bbb; font-size: 13px; }
+  .loading { text-align: center; padding: 3rem; color: #bbb; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total "didn't fit" returns</div>
+      <div class="kpi-value">123</div>
+      <div class="kpi-sub">across 58 products</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Too small</div>
+      <div class="kpi-value blue">84</div>
+      <div class="kpi-sub">68% of sizing returns</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Too big</div>
+      <div class="kpi-value orange">39</div>
+      <div class="kpi-sub">32% of sizing returns</div>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="setFilter(this,&#39;all&#39;)">All products</button>
+    <button class="filter-btn" onclick="setFilter(this,&#39;both&#39;)">Both too big &amp; too small</button>
+    <button class="filter-btn" onclick="setFilter(this,&#39;big&#39;)">Only too big</button>
+    <button class="filter-btn" onclick="setFilter(this,&#39;small&#39;)">Only too small</button>
+  </div>
+
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="Search product..." oninput="render()">
+  </div>
+
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:#ea580c"></div>Too big</div>
+    <div class="leg"><div class="leg-dot" style="background:#2563eb"></div>Too small</div>
+  </div>
+
+  <div class="count-bar" id="countBar"></div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortBy(&#39;name&#39;)">Product</th>
+          <th class="num" onclick="sortBy(&#39;fit&#39;)">Didn't fit</th>
+          <th class="num" onclick="sortBy(&#39;big&#39;)">Too big</th>
+          <th class="num" onclick="sortBy(&#39;small&#39;)">Too small</th>
+          <th>Split</th>
+          <th onclick="sortBy(&#39;lean&#39;)">Lean</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"><tr><td colspan="6"><div class="empty">Could not load data.json — make sure both files are in the same folder.</div></td></tr></tbody>
+    </table>
+  </div>
+
+</div>
+<script>
+let ALL_DATA = [];
+let sortCol = 'fit', sortAsc = false, currentFilter = 'all';
+
+function lean(big, small) {
+  if (big > 0 && small > 0) return small > big ? 'Runs small' : big > small ? 'Runs big' : 'Even';
+  return big > small ? 'Runs big' : small > big ? 'Runs small' : 'Even';
+}
+
+function sortBy(col) {
+  if (sortCol === col) sortAsc = !sortAsc;
+  else { sortCol = col; sortAsc = col === 'name'; }
+  render();
+}
+
+function setFilter(btn, f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function render() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  let rows = ALL_DATA.map(d => ({...d, lean: lean(d.big, d.small)}));
+  if (q) rows = rows.filter(r => r.name.toLowerCase().includes(q));
+  if (currentFilter === 'both')  rows = rows.filter(r => r.big > 0 && r.small > 0);
+  if (currentFilter === 'big')   rows = rows.filter(r => r.big > 0 && r.small === 0);
+  if (currentFilter === 'small') rows = rows.filter(r => r.small > 0 && r.big === 0);
+
+  rows.sort((a, b) => {
+    let va = a[sortCol], vb = b[sortCol];
+    if (typeof va === 'string') return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    return sortAsc ? va - vb : vb - va;
+  });
+
+  document.getElementById('countBar').textContent = `Showing ${rows.length} of ${ALL_DATA.length} products`;
+
+  const tbody = document.getElementById('tableBody');
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty">No products match.</div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map((r, i) => {
+    const bigPct = Math.round(r.big / r.fit * 100);
+    const smlPct = Math.round(r.small / r.fit * 100);
+    const badge = r.lean === 'Runs small' ? `<span class="badge badge-small">Runs small</span>`
+                : r.lean === 'Runs big'   ? `<span class="badge badge-big">Runs big</span>`
+                : `<span class="badge badge-even">Even</span>`;
+    return `<tr>
+      <td>${r.name}</td>
+      <td class="num"><strong>${r.fit}</strong></td>
+      <td class="num">${r.big}</td>
+      <td class="num">${r.small}</td>
+      <td>
+        <div class="bar-wrap">
+          <div class="bar-track">
+            <div class="bar-big" style="width:${bigPct}%"></div>
+            <div class="bar-small" style="width:${smlPct}%"></div>
+          </div>
+          <span class="bar-label">${bigPct}/${smlPct}</span>
+        </div>
+      </td>
+      <td>${badge}</td>
+    </tr>`;
+  }).join('');
+}
+
+fetch('data.json')
+  .then(r => r.json())
+  .then(data => { ALL_DATA = data; render(); })
+  .catch(() => {
+    document.getElementById('tableBody').innerHTML =
+      `<tr><td colspan="6"><div class="empty">Could not load data.json — make sure both files are in the same folder.</div></td></tr>`;
+  });
+</script>
+
+
+</body></html>
